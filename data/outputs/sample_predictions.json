@@ -1,0 +1,212 @@
+{
+  "metadata": {
+    "system": "QGAI Hybrid Classical-Quantum TReDS MVP",
+    "version": "1.0.0",
+    "generated_at": "2026-01-07T12:00:00Z",
+    "model_auc_roc": 0.8389,
+    "total_predictions": 10,
+    "description": "Sample default probability predictions with SHAP explanations"
+  },
+  "predictions": [
+    {
+      "invoice_id": "INV000001",
+      "buyer_id": "B0042",
+      "supplier_id": "S0089",
+      "amount_inr": 2450000.00,
+      "due_date": "2026-02-15",
+      "default_probability": 0.0312,
+      "risk_category": "Low",
+      "explanation": {
+        "top_risk_factors": [
+          {"feature": "is_month_end", "contribution": 0.008, "value": 1}
+        ],
+        "top_protective_factors": [
+          {"feature": "buyer_credit_rating_encoded", "contribution": -0.052, "value": 5},
+          {"feature": "buyer_default_rate", "contribution": -0.041, "value": 0.01},
+          {"feature": "relationship_invoice_count", "contribution": -0.028, "value": 45}
+        ],
+        "summary": "Low risk invoice from established buyer with excellent credit history"
+      }
+    },
+    {
+      "invoice_id": "INV000127",
+      "buyer_id": "B0015",
+      "supplier_id": "S0167",
+      "amount_inr": 890000.00,
+      "due_date": "2026-02-28",
+      "default_probability": 0.0856,
+      "risk_category": "Low",
+      "explanation": {
+        "top_risk_factors": [
+          {"feature": "is_new_relationship", "contribution": 0.021, "value": 1},
+          {"feature": "acceptance_delay_days", "contribution": 0.015, "value": 4}
+        ],
+        "top_protective_factors": [
+          {"feature": "buyer_credit_rating_encoded", "contribution": -0.038, "value": 4},
+          {"feature": "amount_log", "contribution": -0.025, "value": 13.7}
+        ],
+        "summary": "New supplier relationship but buyer has good credit history"
+      }
+    },
+    {
+      "invoice_id": "INV000342",
+      "buyer_id": "B0078",
+      "supplier_id": "S0034",
+      "amount_inr": 5200000.00,
+      "due_date": "2026-01-30",
+      "default_probability": 0.2145,
+      "risk_category": "Moderate",
+      "explanation": {
+        "top_risk_factors": [
+          {"feature": "buyer_default_rate", "contribution": 0.058, "value": 0.08},
+          {"feature": "is_round_amount", "contribution": 0.022, "value": 1},
+          {"feature": "acceptance_delay_days", "contribution": 0.018, "value": 5}
+        ],
+        "top_protective_factors": [
+          {"feature": "relationship_age_days", "contribution": -0.032, "value": 180}
+        ],
+        "summary": "Buyer has elevated historical default rate, round amount pattern detected"
+      }
+    },
+    {
+      "invoice_id": "INV000567",
+      "buyer_id": "R001",
+      "supplier_id": "R002",
+      "amount_inr": 10000000.00,
+      "due_date": "2026-02-10",
+      "default_probability": 0.4521,
+      "risk_category": "High",
+      "explanation": {
+        "top_risk_factors": [
+          {"feature": "buyer_default_rate", "contribution": 0.112, "value": 0.35},
+          {"feature": "is_round_amount", "contribution": 0.045, "value": 1},
+          {"feature": "acceptance_delay_days", "contribution": 0.038, "value": 0},
+          {"feature": "is_new_relationship", "contribution": 0.028, "value": 1}
+        ],
+        "top_protective_factors": [],
+        "summary": "HIGH RISK: Round amount, instant acceptance, new relationship with high-default buyer"
+      }
+    },
+    {
+      "invoice_id": "INV000892",
+      "buyer_id": "R003",
+      "supplier_id": "R001",
+      "amount_inr": 2500000.00,
+      "due_date": "2026-02-05",
+      "default_probability": 0.5234,
+      "risk_category": "High",
+      "explanation": {
+        "top_risk_factors": [
+          {"feature": "buyer_default_rate", "contribution": 0.145, "value": 0.42},
+          {"feature": "is_round_amount", "contribution": 0.052, "value": 1},
+          {"feature": "acceptance_delay_days", "contribution": 0.041, "value": 0}
+        ],
+        "top_protective_factors": [],
+        "summary": "HIGH RISK: Circular transaction pattern, entities appear as both buyer and supplier"
+      }
+    },
+    {
+      "invoice_id": "INV001023",
+      "buyer_id": "B0056",
+      "supplier_id": "S0112",
+      "amount_inr": 1750000.00,
+      "due_date": "2026-03-01",
+      "default_probability": 0.0423,
+      "risk_category": "Low",
+      "explanation": {
+        "top_risk_factors": [],
+        "top_protective_factors": [
+          {"feature": "buyer_default_rate", "contribution": -0.068, "value": 0.00},
+          {"feature": "buyer_credit_rating_encoded", "contribution": -0.055, "value": 6},
+          {"feature": "relationship_invoice_count", "contribution": -0.042, "value": 78}
+        ],
+        "summary": "Excellent buyer with zero historical defaults and long relationship"
+      }
+    },
+    {
+      "invoice_id": "INV001456",
+      "buyer_id": "B0023",
+      "supplier_id": "S0045",
+      "amount_inr": 3200000.00,
+      "due_date": "2026-02-20",
+      "default_probability": 0.1567,
+      "risk_category": "Moderate",
+      "explanation": {
+        "top_risk_factors": [
+          {"feature": "buyer_default_rate", "contribution": 0.045, "value": 0.05},
+          {"feature": "amount_log", "contribution": 0.028, "value": 14.98}
+        ],
+        "top_protective_factors": [
+          {"feature": "buyer_age_days", "contribution": -0.035, "value": 890}
+        ],
+        "summary": "Moderate risk due to slightly elevated default history and large amount"
+      }
+    },
+    {
+      "invoice_id": "INV001789",
+      "buyer_id": "R002",
+      "supplier_id": "R004",
+      "amount_inr": 5000000.00,
+      "due_date": "2026-01-25",
+      "default_probability": 0.6123,
+      "risk_category": "Critical",
+      "explanation": {
+        "top_risk_factors": [
+          {"feature": "buyer_default_rate", "contribution": 0.178, "value": 0.52},
+          {"feature": "is_round_amount", "contribution": 0.058, "value": 1},
+          {"feature": "acceptance_delay_days", "contribution": 0.045, "value": 0},
+          {"feature": "is_new_relationship", "contribution": 0.032, "value": 1}
+        ],
+        "top_protective_factors": [],
+        "summary": "CRITICAL: Part of detected fraud ring, all risk indicators present"
+      }
+    },
+    {
+      "invoice_id": "INV002134",
+      "buyer_id": "B0091",
+      "supplier_id": "S0178",
+      "amount_inr": 675000.00,
+      "due_date": "2026-02-25",
+      "default_probability": 0.0189,
+      "risk_category": "Low",
+      "explanation": {
+        "top_risk_factors": [],
+        "top_protective_factors": [
+          {"feature": "buyer_default_rate", "contribution": -0.072, "value": 0.00},
+          {"feature": "buyer_credit_rating_encoded", "contribution": -0.058, "value": 5},
+          {"feature": "amount_log", "contribution": -0.034, "value": 13.42}
+        ],
+        "summary": "Very low risk - established buyer, reasonable amount, good credit"
+      }
+    },
+    {
+      "invoice_id": "INV002567",
+      "buyer_id": "R004",
+      "supplier_id": "R003",
+      "amount_inr": 1000000.00,
+      "due_date": "2026-02-08",
+      "default_probability": 0.5678,
+      "risk_category": "High",
+      "explanation": {
+        "top_risk_factors": [
+          {"feature": "buyer_default_rate", "contribution": 0.156, "value": 0.48},
+          {"feature": "is_round_amount", "contribution": 0.062, "value": 1},
+          {"feature": "acceptance_delay_days", "contribution": 0.048, "value": 0}
+        ],
+        "top_protective_factors": [],
+        "summary": "HIGH RISK: Completes circular pattern in fraud ring, immediate investigation required"
+      }
+    }
+  ],
+  "summary_statistics": {
+    "risk_distribution": {
+      "Critical": 1,
+      "High": 3,
+      "Moderate": 2,
+      "Low": 4
+    },
+    "average_default_probability": 0.2705,
+    "ring_related_invoices": 4,
+    "legitimate_invoices": 6
+  }
+}

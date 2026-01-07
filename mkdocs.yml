@@ -1,0 +1,124 @@
+# =============================================================================
+# QGAI Quantum Financial Modeling - TReDS MVP
+# MkDocs Configuration
+# =============================================================================
+
+site_name: QGAI TReDS Fraud Detection System
+site_description: Hybrid Classical-Quantum Invoice Fraud Detection Documentation
+site_author: QGAI Quantum Financial Modeling Team
+site_url: https://qgai.github.io/qfm-treds-mvp
+
+# Repository
+repo_name: qgai/qfm-treds-mvp
+repo_url: https://github.com/qgai/qfm-treds-mvp
+
+# Copyright
+copyright: Copyright &copy; 2026 QGAI Quantum Financial Modeling Team
+
+# Theme
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+# Navigation
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting_started/installation.md
+    - Quick Start: getting_started/quickstart.md
+    - Configuration: getting_started/configuration.md
+  - Phase Documentation:
+    - Phase 1 - Setup: phase_docs/phase1_setup.md
+    - Phase 2 - Data Generation: phase_docs/phase2_data.md
+    - Phase 3 - Features: phase_docs/phase3_features.md
+    - Phase 4 - Classical Model: phase_docs/phase4_classical.md
+    - Phase 5 - Quantum Detection: phase_docs/phase5_quantum.md
+    - Phase 6 - Integration: phase_docs/phase6_integration.md
+    - Phase 7 - Explainability: phase_docs/phase7_explain.md
+    - Phase 8 - Testing: phase_docs/phase8_testing.md
+    - Phase 9 - Documentation: phase_docs/phase9_docs.md
+  - API Reference:
+    - Configuration: api/config.md
+    - Data Generation: api/data_generation.md
+    - Classical Model: api/classical.md
+    - Quantum Model: api/quantum.md
+    - Pipeline: api/pipeline.md
+  - Technical Guides:
+    - QUBO Formulation: guides/qubo.md
+    - Feature Engineering: guides/features.md
+    - Explainability: guides/explainability.md
+  - PRD: prd.md
+
+# Extensions
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+# Plugins
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+
+# Extra CSS/JS
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+# Extra configuration
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/qgai
+  version:
+    provider: mike

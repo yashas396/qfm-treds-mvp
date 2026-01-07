@@ -1,0 +1,326 @@
+{
+  "metadata": {
+    "system": "QGAI Hybrid Classical-Quantum TReDS MVP",
+    "version": "1.0.0",
+    "generated_at": "2026-01-07T12:00:00Z",
+    "detection_method": "QUBO Modularity Maximization",
+    "solver": "SimulatedAnnealingSampler",
+    "modularity_achieved": 0.4523,
+    "target_modularity": 0.30,
+    "k_communities": 5,
+    "description": "Fraud ring detection results from quantum-ready QUBO optimization"
+  },
+  "detected_rings": [
+    {
+      "ring_id": "DETECTED_RING_001",
+      "confidence_score": 0.92,
+      "members": [
+        {
+          "entity_id": "R001",
+          "entity_type": "dual",
+          "registration_date": "2025-11-15",
+          "role": "hub",
+          "in_degree": 3,
+          "out_degree": 2
+        },
+        {
+          "entity_id": "R002",
+          "entity_type": "dual",
+          "registration_date": "2025-11-18",
+          "role": "intermediary",
+          "in_degree": 2,
+          "out_degree": 3
+        },
+        {
+          "entity_id": "R003",
+          "entity_type": "dual",
+          "registration_date": "2025-11-20",
+          "role": "intermediary",
+          "in_degree": 2,
+          "out_degree": 2
+        },
+        {
+          "entity_id": "R004",
+          "entity_type": "dual",
+          "registration_date": "2025-11-22",
+          "role": "intermediary",
+          "in_degree": 2,
+          "out_degree": 2
+        },
+        {
+          "entity_id": "R005",
+          "entity_type": "dual",
+          "registration_date": "2025-11-19",
+          "role": "peripheral",
+          "in_degree": 1,
+          "out_degree": 1
+        }
+      ],
+      "statistics": {
+        "member_count": 5,
+        "internal_edges": 12,
+        "density": 0.60,
+        "reciprocity": 0.75,
+        "total_transaction_amount": 45000000.00,
+        "avg_transaction_amount": 3750000.00,
+        "registration_window_days": 7
+      },
+      "circular_patterns": [
+        {
+          "pattern_id": 1,
+          "path": ["R001", "R002", "R003", "R004", "R001"],
+          "total_amount": 18500000.00,
+          "pattern_type": "complete_cycle"
+        },
+        {
+          "pattern_id": 2,
+          "path": ["R002", "R004", "R005", "R002"],
+          "total_amount": 7500000.00,
+          "pattern_type": "complete_cycle"
+        }
+      ],
+      "risk_indicators": {
+        "round_amounts": true,
+        "instant_acceptance": true,
+        "synchronized_registration": true,
+        "high_default_rate": true,
+        "circular_transactions": true
+      },
+      "recommended_action": "IMMEDIATE_INVESTIGATION",
+      "explanation": "5-member fraud ring with circular invoicing pattern. All entities registered within 7-day window. High density (0.60) and reciprocity (0.75) indicate coordinated activity. Total exposure: INR 4.5 Crore."
+    },
+    {
+      "ring_id": "DETECTED_RING_002",
+      "confidence_score": 0.87,
+      "members": [
+        {
+          "entity_id": "R006",
+          "entity_type": "dual",
+          "registration_date": "2025-10-05",
+          "role": "hub",
+          "in_degree": 4,
+          "out_degree": 3
+        },
+        {
+          "entity_id": "R007",
+          "entity_type": "dual",
+          "registration_date": "2025-10-08",
+          "role": "intermediary",
+          "in_degree": 3,
+          "out_degree": 4
+        },
+        {
+          "entity_id": "R008",
+          "entity_type": "dual",
+          "registration_date": "2025-10-10",
+          "role": "intermediary",
+          "in_degree": 2,
+          "out_degree": 2
+        },
+        {
+          "entity_id": "R009",
+          "entity_type": "dual",
+          "registration_date": "2025-10-12",
+          "role": "intermediary",
+          "in_degree": 2,
+          "out_degree": 3
+        },
+        {
+          "entity_id": "R010",
+          "entity_type": "dual",
+          "registration_date": "2025-10-09",
+          "role": "peripheral",
+          "in_degree": 2,
+          "out_degree": 1
+        },
+        {
+          "entity_id": "R011",
+          "entity_type": "dual",
+          "registration_date": "2025-10-14",
+          "role": "peripheral",
+          "in_degree": 1,
+          "out_degree": 2
+        },
+        {
+          "entity_id": "R012",
+          "entity_type": "dual",
+          "registration_date": "2025-10-11",
+          "role": "peripheral",
+          "in_degree": 2,
+          "out_degree": 1
+        }
+      ],
+      "statistics": {
+        "member_count": 7,
+        "internal_edges": 21,
+        "density": 0.50,
+        "reciprocity": 0.67,
+        "total_transaction_amount": 82000000.00,
+        "avg_transaction_amount": 3904761.90,
+        "registration_window_days": 9
+      },
+      "circular_patterns": [
+        {
+          "pattern_id": 1,
+          "path": ["R006", "R007", "R008", "R009", "R006"],
+          "total_amount": 32000000.00,
+          "pattern_type": "complete_cycle"
+        },
+        {
+          "pattern_id": 2,
+          "path": ["R007", "R010", "R012", "R007"],
+          "total_amount": 15000000.00,
+          "pattern_type": "complete_cycle"
+        },
+        {
+          "pattern_id": 3,
+          "path": ["R009", "R011", "R008", "R009"],
+          "total_amount": 12000000.00,
+          "pattern_type": "complete_cycle"
+        }
+      ],
+      "risk_indicators": {
+        "round_amounts": true,
+        "instant_acceptance": true,
+        "synchronized_registration": true,
+        "high_default_rate": true,
+        "circular_transactions": true
+      },
+      "recommended_action": "IMMEDIATE_INVESTIGATION",
+      "explanation": "7-member fraud ring with multiple circular patterns. Hub entity R006 coordinates transactions. Total exposure: INR 8.2 Crore. Three distinct circular patterns detected."
+    },
+    {
+      "ring_id": "DETECTED_RING_003",
+      "confidence_score": 0.78,
+      "members": [
+        {
+          "entity_id": "R013",
+          "entity_type": "dual",
+          "registration_date": "2025-09-20",
+          "role": "hub",
+          "in_degree": 5,
+          "out_degree": 4
+        },
+        {
+          "entity_id": "R014",
+          "entity_type": "dual",
+          "registration_date": "2025-09-22",
+          "role": "intermediary",
+          "in_degree": 3,
+          "out_degree": 3
+        },
+        {
+          "entity_id": "R015",
+          "entity_type": "dual",
+          "registration_date": "2025-09-25",
+          "role": "intermediary",
+          "in_degree": 2,
+          "out_degree": 3
+        },
+        {
+          "entity_id": "R016",
+          "entity_type": "dual",
+          "registration_date": "2025-09-28",
+          "role": "intermediary",
+          "in_degree": 3,
+          "out_degree": 2
+        },
+        {
+          "entity_id": "R017",
+          "entity_type": "dual",
+          "registration_date": "2025-09-24",
+          "role": "peripheral",
+          "in_degree": 1,
+          "out_degree": 2
+        },
+        {
+          "entity_id": "R018",
+          "entity_type": "dual",
+          "registration_date": "2025-09-26",
+          "role": "peripheral",
+          "in_degree": 2,
+          "out_degree": 2
+        },
+        {
+          "entity_id": "R019",
+          "entity_type": "dual",
+          "registration_date": "2025-09-29",
+          "role": "peripheral",
+          "in_degree": 1,
+          "out_degree": 1
+        },
+        {
+          "entity_id": "R020",
+          "entity_type": "dual",
+          "registration_date": "2025-09-27",
+          "role": "peripheral",
+          "in_degree": 1,
+          "out_degree": 1
+        }
+      ],
+      "statistics": {
+        "member_count": 8,
+        "internal_edges": 28,
+        "density": 0.50,
+        "reciprocity": 0.64,
+        "total_transaction_amount": 125000000.00,
+        "avg_transaction_amount": 4464285.71,
+        "registration_window_days": 9
+      },
+      "circular_patterns": [
+        {
+          "pattern_id": 1,
+          "path": ["R013", "R014", "R015", "R016", "R013"],
+          "total_amount": 48000000.00,
+          "pattern_type": "complete_cycle"
+        },
+        {
+          "pattern_id": 2,
+          "path": ["R014", "R017", "R018", "R014"],
+          "total_amount": 22000000.00,
+          "pattern_type": "complete_cycle"
+        },
+        {
+          "pattern_id": 3,
+          "path": ["R015", "R018", "R019", "R020", "R015"],
+          "total_amount": 18000000.00,
+          "pattern_type": "complete_cycle"
+        }
+      ],
+      "risk_indicators": {
+        "round_amounts": true,
+        "instant_acceptance": true,
+        "synchronized_registration": true,
+        "high_default_rate": true,
+        "circular_transactions": true
+      },
+      "recommended_action": "IMMEDIATE_INVESTIGATION",
+      "explanation": "8-member fraud ring - largest detected. Hub entity R013 with 5 inbound connections. Total exposure: INR 12.5 Crore. Complex circular structure with nested patterns."
+    }
+  ],
+  "summary_statistics": {
+    "total_rings_detected": 3,
+    "total_ring_members": 20,
+    "total_exposure_inr": 252000000.00,
+    "avg_ring_size": 6.67,
+    "avg_density": 0.53,
+    "avg_reciprocity": 0.69,
+    "detection_rate": 0.85,
+    "false_positive_rate": 0.05
+  },
+  "qubo_solution_details": {
+    "num_reads": 1000,
+    "num_sweeps": 1000,
+    "best_energy": -125.432,
+    "runtime_seconds": 2.34,
+    "quantum_ready": true,
+    "dwave_compatible": true
+  },
+  "comparison_with_classical": {
+    "louvain_modularity": 0.38,
+    "qubo_modularity": 0.4523,
+    "improvement_percent": 19.02,
+    "louvain_communities": 6,
+    "qubo_communities": 5
+  }
+}

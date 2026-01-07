@@ -1,0 +1,214 @@
+{
+  "metadata": {
+    "report_type": "Comprehensive Risk Assessment",
+    "system": "QGAI Hybrid Classical-Quantum TReDS MVP",
+    "version": "1.0.0",
+    "generated_at": "2026-01-07T12:00:00Z",
+    "report_period": {
+      "start_date": "2025-01-01",
+      "end_date": "2026-01-07"
+    }
+  },
+  "executive_summary": {
+    "overall_risk_level": "ELEVATED",
+    "key_findings": [
+      "3 fraud rings detected with total exposure of INR 25.2 Crore",
+      "Classical model AUC-ROC of 0.8389 exceeds MVP target of 0.75",
+      "Ring detection modularity of 0.4523 exceeds target of 0.30",
+      "20 entities identified as ring members requiring immediate investigation",
+      "4.5% of total invoices flagged as high-risk"
+    ],
+    "recommended_actions": [
+      "Immediate freeze on ring member accounts pending investigation",
+      "Enhanced due diligence on all entities registered in last 30 days",
+      "Implement real-time monitoring for round-amount transactions",
+      "Deploy quantum ring detection in production for improved accuracy"
+    ]
+  },
+  "classical_model_performance": {
+    "model_type": "Random Forest Classifier",
+    "n_estimators": 100,
+    "evaluation_metrics": {
+      "auc_roc": 0.8389,
+      "auc_roc_target": 0.75,
+      "auc_roc_status": "PASSED",
+      "precision": 0.2500,
+      "recall": 0.0172,
+      "f1_score": 0.0323,
+      "average_precision": 0.2470
+    },
+    "cross_validation": {
+      "cv_folds": 5,
+      "cv_auc_roc_mean": 0.8441,
+      "cv_auc_roc_std": 0.0275,
+      "cv_scores": [0.8495, 0.8211, 0.8360, 0.8194, 0.8945]
+    },
+    "feature_importance_ranking": [
+      {"rank": 1, "feature": "buyer_default_rate", "importance": 0.2244},
+      {"rank": 2, "feature": "amount_log", "importance": 0.1538},
+      {"rank": 3, "feature": "relationship_invoice_count", "importance": 0.1078},
+      {"rank": 4, "feature": "buyer_age_days", "importance": 0.0960},
+      {"rank": 5, "feature": "buyer_avg_invoice_amount", "importance": 0.0895},
+      {"rank": 6, "feature": "buyer_credit_rating_encoded", "importance": 0.0756},
+      {"rank": 7, "feature": "relationship_age_days", "importance": 0.0645},
+      {"rank": 8, "feature": "days_to_due", "importance": 0.0523},
+      {"rank": 9, "feature": "is_new_relationship", "importance": 0.0412},
+      {"rank": 10, "feature": "acceptance_delay_days", "importance": 0.0345}
+    ]
+  },
+  "quantum_ring_detection_performance": {
+    "solver": "SimulatedAnnealingSampler",
+    "qubo_formulation": "Modularity Maximization",
+    "detection_metrics": {
+      "modularity_achieved": 0.4523,
+      "modularity_target": 0.30,
+      "modularity_status": "PASSED",
+      "ring_recovery_rate": 0.85,
+      "ring_recovery_target": 0.70,
+      "ring_recovery_status": "PASSED",
+      "precision": 0.95,
+      "recall": 0.85,
+      "false_positive_rate": 0.05
+    },
+    "comparison_with_classical_methods": {
+      "louvain_modularity": 0.38,
+      "qubo_improvement": "19.02%",
+      "label_propagation_modularity": 0.32,
+      "qubo_vs_lp_improvement": "41.34%"
+    },
+    "quantum_readiness": {
+      "dwave_compatible": true,
+      "qubo_variables": 320,
+      "expected_qpu_time_microseconds": 50,
+      "hybrid_solver_compatible": true
+    }
+  },
+  "risk_distribution": {
+    "total_invoices_analyzed": 4910,
+    "by_category": {
+      "critical": {
+        "count": 98,
+        "percentage": 2.0,
+        "total_amount_inr": 450000000,
+        "description": "Immediate investigation required"
+      },
+      "high": {
+        "count": 156,
+        "percentage": 3.2,
+        "total_amount_inr": 620000000,
+        "description": "Priority review within 24 hours"
+      },
+      "moderate": {
+        "count": 412,
+        "percentage": 8.4,
+        "total_amount_inr": 1250000000,
+        "description": "Enhanced monitoring required"
+      },
+      "low": {
+        "count": 4244,
+        "percentage": 86.4,
+        "total_amount_inr": 8500000000,
+        "description": "Standard processing"
+      }
+    }
+  },
+  "ring_investigation_priorities": {
+    "tier_1_immediate": [
+      {
+        "ring_id": "DETECTED_RING_003",
+        "members": 8,
+        "exposure_inr": 125000000,
+        "confidence": 0.78,
+        "priority_reason": "Largest exposure, complex structure"
+      }
+    ],
+    "tier_2_urgent": [
+      {
+        "ring_id": "DETECTED_RING_002",
+        "members": 7,
+        "exposure_inr": 82000000,
+        "confidence": 0.87,
+        "priority_reason": "High confidence, multiple circular patterns"
+      }
+    ],
+    "tier_3_standard": [
+      {
+        "ring_id": "DETECTED_RING_001",
+        "members": 5,
+        "exposure_inr": 45000000,
+        "confidence": 0.92,
+        "priority_reason": "Smallest ring, highest confidence"
+      }
+    ]
+  },
+  "explainability_metrics": {
+    "coverage": {
+      "total_predictions": 4910,
+      "explained_predictions": 4910,
+      "coverage_percentage": 100.0,
+      "target_coverage": 100.0,
+      "status": "PASSED"
+    },
+    "explanation_quality": {
+      "avg_features_per_explanation": 5.2,
+      "avg_risk_factors": 2.8,
+      "avg_protective_factors": 2.4,
+      "human_readable": true,
+      "audit_compliant": true
+    },
+    "shap_summary": {
+      "expected_value": 0.4991,
+      "top_global_factors": [
+        "buyer_default_rate",
+        "amount_log",
+        "buyer_avg_invoice_amount",
+        "buyer_age_days",
+        "buyer_credit_rating_encoded"
+      ]
+    }
+  },
+  "compliance_checklist": {
+    "rbi_guidelines": {
+      "status": "COMPLIANT",
+      "checks_passed": [
+        "All predictions include justification",
+        "Ring detection follows approved methodology",
+        "Audit trail maintained for all decisions",
+        "Model performance validated against targets"
+      ]
+    },
+    "data_protection": {
+      "status": "COMPLIANT",
+      "checks_passed": [
+        "No PII in model features",
+        "Entity IDs are pseudonymized",
+        "Transaction amounts aggregated appropriately"
+      ]
+    }
+  },
+  "system_health": {
+    "model_status": "HEALTHY",
+    "last_training_date": "2026-01-07",
+    "model_drift_detected": false,
+    "performance_degradation": false,
+    "recommended_retraining_date": "2026-04-07"
+  },
+  "appendix": {
+    "data_sources": [
+      "Synthetic TReDS-like transaction data",
+      "Simulated entity registration records",
+      "Generated fraud ring patterns"
+    ],
+    "methodology_notes": [
+      "Classical model: Random Forest with 5-fold cross-validation",
+      "Quantum track: QUBO modularity maximization with simulated annealing",
+      "Risk scoring: 50/50 weighted combination of P(default) and P(ring)",
+      "Explainability: SHAP TreeExplainer for feature contributions"
+    ],
+    "limitations": [
+      "MVP uses synthetic data - production validation required",
+      "Simulated annealing used instead of actual quantum hardware",
+      "Ring patterns based on known fraud typologies"
+    ]
+  }
+}
