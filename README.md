@@ -13,6 +13,20 @@
 
 ---
 
+## Live Demo
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://qfm-treds-mvp-yashas396.streamlit.app/)
+
+**Try the live application:** https://qfm-treds-mvp-yashas396.streamlit.app/
+
+Features available in the demo:
+- Risk Overview Dashboard with real-time metrics
+- Invoice Queue with risk assessment and PDF export
+- Ring Analysis with fraud network visualization
+- Decision Log for audit trail
+
+---
+
 ## Overview
 
 This MVP implements a **Hybrid Classical-Quantum System** for TReDS (Trade Receivables Discounting System) invoice fraud detection. The system combines:
