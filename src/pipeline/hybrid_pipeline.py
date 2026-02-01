@@ -100,17 +100,18 @@ class HybridPipeline:
     def __init__(
         self,
         config: Optional[Config] = None,
-        k_communities: int = 5
+        k_communities: Optional[int] = None
     ):
         """
         Initialize HybridPipeline.
 
         Args:
             config: System configuration
-            k_communities: Number of communities for ring detection
+            k_communities: Number of communities for ring detection.
+                           If None, uses config.quantum.k_communities.
         """
         self.config = config or get_config()
-        self.k_communities = k_communities
+        self.k_communities = k_communities if k_communities is not None else self.config.quantum.k_communities
 
         # Components will be initialized on run
         self.feature_engineer: Optional[FeatureEngineer] = None

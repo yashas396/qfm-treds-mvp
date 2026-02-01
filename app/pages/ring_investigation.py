@@ -257,7 +257,7 @@ def render_network_graph(ring: dict):
         height=400
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     # Legend
     st.markdown("""

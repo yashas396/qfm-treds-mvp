@@ -166,7 +166,7 @@ def run_data_generation(config, verbose: bool = False):
     if validation_result.is_valid:
         print("      [OK] Data validation passed")
     else:
-        print(f"      ✗ Data validation failed: {validation_result.errors}")
+        print(f"      [FAIL] Data validation failed: {validation_result.errors}")
 
     return entities_df, invoices_df
 
@@ -182,62 +182,67 @@ def run_feature_engineering(entities_df, invoices_df, config, verbose: bool = Fa
         verbose: Enable verbose output
 
     Returns:
-        features_df: DataFrame with engineered features
+        Tuple of (FeatureEngineeringResult, GraphBuildResult)
     """
     print_section("PHASE 3: FEATURE ENGINEERING")
 
     from src.feature_engineering import FeatureEngineer
 
-    print("\n[1/2] Engineering features...")
+    print("\n[1/1] Engineering features and building graph...")
     engineer = FeatureEngineer(config.features)
-    features_df = engineer.fit_transform(entities_df, invoices_df)
-    print(f"      Engineered {len(engineer.feature_names)} features")
+    feature_result = engineer.fit_transform(entities_df, invoices_df, build_graph=True)
 
-    print("\n[2/2] Building transaction graph...")
-    from src.feature_engineering import TransactionGraphBuilder
-    graph_builder = TransactionGraphBuilder()
-    graph_result = graph_builder.build(invoices_df)
-    print(f"      Graph: {graph_result.n_nodes} nodes, {graph_result.n_edges} edges")
+    print(f"      Engineered {feature_result.n_features} features")
+    print(f"      Samples: {feature_result.n_samples}")
+    if feature_result.graph_result:
+        print(f"      Graph: {feature_result.graph_result.n_nodes} nodes, {feature_result.graph_result.n_edges} edges")
 
-    return features_df, graph_result
+    return feature_result, feature_result.graph_result
 
 
-def run_classical_training(features_df, config, verbose: bool = False):
+def run_classical_training(feature_result, config, verbose: bool = False):
     """
     Phase 4: Train classical default prediction model.
 
     Args:
-        features_df: Features DataFrame
+        feature_result: FeatureEngineeringResult from Phase 3
         config: Configuration object
         verbose: Enable verbose output
 
     Returns:
-        Trained default predictor model
+        Tuple of (ModelTrainer result, DefaultPredictor, feature matrix X, target y)
     """
     print_section("PHASE 4: CLASSICAL DEFAULT PREDICTION")
 
-    from src.classical import DefaultPredictor, ModelEvaluator
+    from src.classical import ModelTrainer
+    from src.feature_engineering import FeatureEngineer
+
+    # Extract feature matrix and target from feature engineering result
+    engineer = FeatureEngineer(config.features)
+    X, y = engineer.get_feature_matrix(feature_result)
+
+    print(f"\n      Feature matrix: {X.shape}")
+    print(f"      Default rate: {y.mean():.2%}")
 
     print("\n[1/2] Training Random Forest model...")
-    predictor = DefaultPredictor(config.classical)
-    predictor.fit(features_df)
+    trainer = ModelTrainer(config.classical)
+    training_result = trainer.train(X, y, feature_result.feature_names)
 
-    print("\n[2/2] Evaluating model...")
-    evaluator = ModelEvaluator()
-    metrics = evaluator.evaluate(predictor, features_df)
-
-    print(f"\n      Model Performance:")
-    print(f"      - AUC-ROC: {metrics['auc_roc']:.4f} (target: ≥{config.classical.target_auc_roc})")
-    print(f"      - Average Precision: {metrics['average_precision']:.4f}")
-    print(f"      - F1-Score: {metrics['f1']:.4f}")
+    print(f"\n[2/2] Model Performance:")
+    print(f"      - AUC-ROC: {training_result.test_evaluation.auc_roc:.4f} (target: >={config.classical.target_auc_roc})")
+    print(f"      - Average Precision: {training_result.test_evaluation.average_precision:.4f}")
+    print(f"      - F1-Score: {training_result.test_evaluation.f1:.4f}")
+    if training_result.training_result.evaluation.cv_mean:
+        print(f"      - CV AUC-ROC: {training_result.training_result.evaluation.cv_mean:.4f}")
 
     # Check target
-    if metrics['auc_roc'] >= config.classical.target_auc_roc:
+    if training_result.test_evaluation.auc_roc >= config.classical.target_auc_roc:
         print("      [OK] AUC-ROC target met!")
     else:
-        print("      ⚠ AUC-ROC below target")
+        print("      [WARNING] AUC-ROC below target")
 
-    return predictor
+    predictor = training_result.model
+    return training_result, predictor, X, y
 
 
 def run_quantum_detection(graph_result, invoices_df, config, verbose: bool = False):
@@ -258,7 +263,7 @@ def run_quantum_detection(graph_result, invoices_df, config, verbose: bool = Fal
     from src.quantum import RingDetector
 
     print("\n[1/2] Running QUBO-based community detection...")
-    detector = RingDetector(config.quantum)
+    detector = RingDetector(config=config.quantum)
 
     # Pass the modularity matrix, node list, and adjacency matrix from graph_result
     result = detector.detect(
@@ -267,8 +272,9 @@ def run_quantum_detection(graph_result, invoices_df, config, verbose: bool = Fal
         adjacency_matrix=graph_result.adjacency_matrix
     )
 
-    print(f"      QUBO size: {result.qubo_result.n_variables} variables")
-    print(f"      Communities found: {result.n_communities}")
+    n_variables = len(graph_result.node_list) * detector.k_communities
+    print(f"      QUBO size: {n_variables} variables")
+    print(f"      Communities found: {result.n_communities_found}")
     print(f"      Modularity score: {result.modularity:.4f}")
 
     print("\n[2/2] Evaluating ring detection...")
@@ -277,89 +283,96 @@ def run_quantum_detection(graph_result, invoices_df, config, verbose: bool = Fal
     high_risk_communities = [c for c in result.communities if c.ring_score >= config.quantum.ring_detection_threshold]
 
     print(f"\n      Ring Detection Results:")
-    print(f"      - Communities detected: {result.n_communities}")
+    print(f"      - Communities detected: {result.n_communities_found}")
     print(f"      - High-risk communities: {len(high_risk_communities)}")
     print(f"      - Ground truth rings: {len(ground_truth_rings)}")
 
-    # Build ring_scores dict for compatibility with downstream code
-    ring_scores = {c.community_id: c.ring_score for c in result.communities}
+    # Build ring_scores dict mapping entity_id -> ring_score
+    ring_scores = detector.get_ring_scores(result)
 
     return result, ring_scores
 
 
-def run_pipeline_integration(predictor, ring_scores, entities_df, invoices_df, config, verbose: bool = False):
+def run_pipeline_integration(predictor, ring_scores, X, invoices_df, config, verbose: bool = False):
     """
     Phase 6: Integrate classical and quantum components.
 
     Args:
         predictor: Trained default predictor
-        ring_scores: Ring probability scores
-        entities_df: Entity DataFrame
+        ring_scores: Ring probability scores (entity_id -> score)
+        X: Feature matrix for default prediction
         invoices_df: Invoice DataFrame
         config: Configuration object
         verbose: Enable verbose output
 
     Returns:
-        Final predictions DataFrame
+        Tuple of (RiskScoringResult, targeting DataFrame)
     """
     print_section("PHASE 6: HYBRID PIPELINE INTEGRATION")
 
-    from src.pipeline import HybridPipeline, RiskScorer, TargetingEngine
+    from src.pipeline import RiskScorer
 
-    print("\n[1/3] Combining predictions...")
-    pipeline = HybridPipeline(config)
-    predictions = pipeline.predict(entities_df, invoices_df)
+    print("\n[1/3] Computing default probabilities...")
+    default_probs = predictor.predict_proba(X)
+    print(f"      Mean P(default): {default_probs.mean():.4f}")
 
     print("\n[2/3] Computing composite risk scores...")
-    risk_scorer = RiskScorer(config.risk_scoring)
-    predictions = risk_scorer.score(predictions)
+    risk_scorer = RiskScorer(config=config.risk_scoring)
+    risk_result = risk_scorer.score(invoices_df, default_probs, ring_scores)
+
+    summary = risk_scorer.get_risk_summary(risk_result)
+
+    print(f"\n      Risk Distribution:")
+    for level, count in summary.get('risk_level_counts', {}).items():
+        pct = count / summary['total_invoices'] * 100
+        print(f"      - {level}: {count} ({pct:.1f}%)")
+
+    print(f"\n      High risk: {summary['n_high_risk']} ({summary['pct_high_risk']:.2f}%)")
+    print(f"      Ring associated: {summary['n_ring_associated']} ({summary['pct_ring_associated']:.2f}%)")
 
     print("\n[3/3] Generating targeting list...")
-    targeting = TargetingEngine(config.risk_scoring)
-    targeting_list = targeting.prioritize(predictions)
+    targeting_list = risk_scorer.get_targeting_list(risk_result, top_n=20)
+    print(f"      Top 20 invoices by composite score generated")
 
-    # Summary
-    print(f"\n      Risk Distribution:")
-    for category in ['Critical', 'High', 'Moderate', 'Low']:
-        count = len(predictions[predictions['risk_category'] == category])
-        pct = count / len(predictions) * 100
-        print(f"      - {category}: {count} ({pct:.1f}%)")
-
-    return predictions, targeting_list
+    return risk_result, targeting_list
 
 
-def run_explainability(predictor, predictions, config, verbose: bool = False):
+def run_explainability(predictor, X, feature_names, config, verbose: bool = False):
     """
     Phase 7: Generate explanations.
 
     Args:
-        predictor: Trained model
-        predictions: Predictions DataFrame
+        predictor: Trained DefaultPredictor model
+        X: Feature matrix
+        feature_names: List of feature names
         config: Configuration object
         verbose: Enable verbose output
 
     Returns:
-        Explanations dictionary
+        ExplanationResult
     """
     print_section("PHASE 7: EXPLAINABILITY FRAMEWORK")
 
-    from src.explainability import ShapExplainer, RingExplainer, ReportGenerator
+    from src.explainability import SHAPExplainer
 
-    print("\n[1/3] Computing SHAP values...")
-    shap_explainer = ShapExplainer(predictor, config.explainability)
-    shap_values = shap_explainer.explain(predictions.head(100))
+    print("\n[1/2] Computing SHAP values...")
+    shap_explainer = SHAPExplainer(config.explainability)
+    shap_explainer.fit(predictor.model, feature_names)
 
-    print("\n[2/3] Generating ring explanations...")
-    ring_explainer = RingExplainer(config.explainability)
-    ring_explanations = ring_explainer.explain_all()
+    n_samples = min(100, len(X))
+    explanation_result = shap_explainer.explain(X, n_samples=n_samples)
 
-    print("\n[3/3] Generating reports...")
-    report_gen = ReportGenerator(config)
-    report_gen.generate_summary_report(predictions)
+    print(f"      Samples explained: {explanation_result.n_samples}")
+    print(f"      Expected value: {explanation_result.expected_value:.4f}")
 
-    print("      [OK] Reports generated in reports/ directory")
+    print(f"\n[2/2] Feature importance (top 5):")
+    for feat, imp in explanation_result.global_explanation.feature_ranking[:5]:
+        direction = '+' if explanation_result.global_explanation.mean_shap_values[feat] > 0 else '-'
+        print(f"      - {feat}: {imp:.4f} ({direction})")
 
-    return shap_values, ring_explanations
+    print("\n      [OK] Explanations generated")
+
+    return explanation_result
 
 
 def run_validation(predictions, invoices_df, config, verbose: bool = False):
@@ -386,9 +399,9 @@ def run_validation(predictions, invoices_df, config, verbose: bool = False):
 
     # This will be fully implemented in Phase 8
     criteria = [
-        ("Default Model AUC-ROC", "≥0.75", "PENDING"),
-        ("Ring Detection Modularity", "≥0.30", "PENDING"),
-        ("Ring Recovery Rate", "≥70%", "PENDING"),
+        ("Default Model AUC-ROC", ">=0.75", "PENDING"),
+        ("Ring Detection Modularity", ">=0.30", "PENDING"),
+        ("Ring Recovery Rate", ">=70%", "PENDING"),
         ("Explainability Coverage", "100%", "PENDING"),
         ("Quantum Readiness", "Full", "PENDING"),
     ]
@@ -456,12 +469,14 @@ def main():
             entities_df, invoices_df = run_data_generation(config, args.verbose)
 
             # Phase 3: Feature Engineering
-            features_df, graph = run_feature_engineering(
+            feature_result, graph = run_feature_engineering(
                 entities_df, invoices_df, config, args.verbose
             )
 
             # Phase 4: Classical Training
-            predictor = run_classical_training(features_df, config, args.verbose)
+            training_result, predictor, X, y = run_classical_training(
+                feature_result, config, args.verbose
+            )
 
             if not args.no_rings:
                 # Phase 5: Quantum Detection
@@ -473,22 +488,22 @@ def main():
 
             if args.mode == "full":
                 # Phase 6: Integration
-                predictions, targeting_list = run_pipeline_integration(
-                    predictor, ring_scores, entities_df, invoices_df, config, args.verbose
+                risk_result, targeting_list = run_pipeline_integration(
+                    predictor, ring_scores, X, invoices_df, config, args.verbose
                 )
 
                 # Phase 7: Explainability
-                shap_values, ring_explanations = run_explainability(
-                    predictor, predictions, config, args.verbose
+                explanation_result = run_explainability(
+                    predictor, X, feature_result.feature_names, config, args.verbose
                 )
 
                 # Phase 8: Validation
                 validation_results = run_validation(
-                    predictions, invoices_df, config, args.verbose
+                    risk_result.scores_df, invoices_df, config, args.verbose
                 )
 
                 # Save outputs
-                save_outputs(predictions, targeting_list, config, args.output_dir)
+                save_outputs(risk_result.scores_df, targeting_list, config, args.output_dir)
 
         elif args.mode == "predict":
             print("\nPredict mode requires trained models. Please run with --mode train first.")

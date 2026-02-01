@@ -208,6 +208,7 @@ class RiskScorer:
             Composite = w_d * P(default) + w_r * RingScore + w_i * P(default) * RingScore
 
         The interaction term captures that ring-associated defaults are especially risky.
+        Score is clipped to [0, 1] range.
         """
         composite = (
             self.default_weight * default_prob +
@@ -215,11 +216,8 @@ class RiskScorer:
             self.interaction_weight * default_prob * ring_score
         )
 
-        # Normalize to [0, 1]
-        max_possible = self.default_weight + self.ring_weight + self.interaction_weight
-        composite = min(1.0, composite / max_possible) if max_possible > 0 else 0.0
-
-        return composite
+        # Clip to [0, 1]
+        return min(1.0, max(0.0, composite))
 
     def _get_risk_level(self, score: float) -> str:
         """Get risk level for a given score."""

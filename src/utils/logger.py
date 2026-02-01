@@ -9,6 +9,7 @@ Version: 1.0.0
 Date: January 2026
 """
 
+import logging
 import sys
 from pathlib import Path
 from typing import Optional
@@ -18,7 +19,6 @@ try:
     from loguru import logger
     LOGURU_AVAILABLE = True
 except ImportError:
-    import logging
     LOGURU_AVAILABLE = False
 
 
